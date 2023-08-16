@@ -1,0 +1,39 @@
+pipeline{
+
+    docker any
+
+    stages{
+
+        stage("Plan"){
+
+            steps{
+                script{
+
+                    sh """ 
+                        terraform init
+                        terraform plan
+                        if echo $? =! 0
+                        Plan=flase
+                        else
+                        Plan=true
+                    
+                    """
+                }
+            }
+        }
+        stage("Apply"){
+            steps{
+                when {
+
+                    Plan=true
+                }
+                script{
+                    sh """ 
+                        terraform init
+                        terraform apply
+                    """
+                }
+            }
+        }
+    }
+}
